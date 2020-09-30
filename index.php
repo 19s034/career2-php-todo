@@ -4,13 +4,16 @@ require_once './todo.php';
 $todo = new Todo();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset($_POST["method"]) && $_POST["method"] === "DELETE") {
-        $todo->delete();
+    if (isset($_POST["method"]) && $_POST["method"] === "DELETE_All") {
+        $todo->deleteAll();
+    } elseif (isset($_POST["method"]) && $_POST["method"] === "DELETE") {
+        $todo->delete($_POST["todo_id"]);
     } elseif (isset($_POST["method"]) && $_POST["method"] === "UPDATE") {
         $todo->update($_POST["todo_id"], $_POST['status']);
     } else {
         $todo->post($_POST['title'], $_POST['due_date']);
     }
+
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "GET") {
@@ -56,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET") {
         <hr>
 
         <form method="POST" action="<?php print($_SERVER['PHP_SELF']) ?>">
-            <input type="hidden" name="method" value="DELETE">
+            <input type="hidden" name="method" value="DELETE_All">
             <button class="btn btn-danger" type="submit">投稿を全削除する</button>
         </form>
         
@@ -74,6 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET") {
                 <th>期限</th>
                 <th>状態</th>
                 <th>更新</th>
+                <th>削除</th>
             </tr>
             </thead>
             <tbody>
@@ -102,6 +106,13 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET") {
                             <button class="btn btn-primary" type="submit">変更</button>
                         </td>
                     </form>
+                    <td>
+                        <form method="POST" action="<?php print($_SERVER['PHP_SELF']) ?>">
+                            <input type="hidden" name="method" value="DELETE">
+                            <input type="hidden" name="todo_id" value="<?=$todo["id"]; ?>">
+                            <button class="btn btn-danger" type="submit">削除</button>
+                        </form>
+                    </td>
                 </tr>
                 <?php
             }
